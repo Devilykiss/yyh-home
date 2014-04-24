@@ -2,6 +2,8 @@ package com.classcourse.action;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.classcourse.domain.Course;
 import com.classcourse.domain.Student;
 import com.classcourse.domain.Syllabus;
@@ -28,14 +30,14 @@ public class AdminAction extends BaseAction{
 	private List<Course> courseList;
 	private List<Syllabus> syllabusList;
 	private Integer courseID;
-	private Integer userID;
+	private String userID;
 	
 	
 	
-	public Integer getUserID() {
+	public String getUserID() {
 		return userID;
 	}
-	public void setUserID(Integer userID) {
+	public void setUserID(String userID) {
 		this.userID = userID;
 	}
 	public SyllabusService getSyllabusService() {
@@ -125,20 +127,6 @@ public class AdminAction extends BaseAction{
 		return FAIL;
 	}
 	
-	/**
-	 *	通过管理员查询公共的课程表
-	 *	<p> 只有一个管理员
-	 *  <p> 通过teacher表level查询
-	 **/
-	public String listSyllabusByAdminNo(){
-		if(userID != null){
-			syllabusList = syllabusService.listSyllabusByUserID(userID);
-			return SUCCESS;
-		}else{
-			return FAIL;
-		}
-	}
-	
 	
 	public String queryCourseObject(){
 		if(courseID != null){
@@ -184,6 +172,65 @@ public class AdminAction extends BaseAction{
 	}
 	
 	
+	/**
+	 *	通过管理员查询公共的课程表
+	 *	<p> 只有一个管理员
+	 *  <p> 通过teacher表level查询
+	 **/
+	public String listSyllabusByAdminNo(){
+		if(userID != null){
+			syllabusList = syllabusService.listSyllabusByUserID(userID);
+			HttpServletRequest request = this.getRequest();
+			request.setAttribute("lesson1", getTR(syllabusList, 1));
+			request.setAttribute("lesson2", getTR(syllabusList, 2));
+			request.setAttribute("lesson3", getTR(syllabusList, 3));
+			request.setAttribute("lesson4", getTR(syllabusList, 4));
+			return SUCCESS;
+		}else{
+			return FAIL;
+		}
+	}
 	
+
+	private String getTR(List<Syllabus> tmpList,int lessonno){
+		StringBuilder tdsb = new StringBuilder();
+		StringBuilder tdsb2 = new StringBuilder();
+		StringBuilder trsb = new StringBuilder();
+		for (int i = 0; i < tmpList.size(); i++) {
+			Syllabus syllabus = tmpList.get(i);
+			if(syllabus.getLessonNumber() == lessonno){
+				tdsb.append("<td width='130' height='54'>");
+				tdsb.append("<p style='padding:5px;margin-bottom:3px'>");
+				if(isNotNull(syllabus.getCourseEntity())){
+					tdsb.append(syllabus.getCourseEntity().getName() + "</p>");
+					if(syllabus.getCourseEntity().getType().equals("选")){
+						tdsb.append("(<font color='green'>选</font>)");
+					}else{
+						tdsb.append("(<font color='red'>必</font>)");
+					}
+					tdsb.append("</td>");
+				}else{
+					tdsb.append("</p></td>");
+				}
+				tdsb.append("<td width='22' rowspan='2'><div align='center'>");
+				if(isNotNull(syllabus.getTeacherEntity())){
+					tdsb.append(syllabus.getCourseEntity().getTeacherEntity().getName());
+				}
+				tdsb.append("</div></td>");
+				tdsb2.append("<td height='20'>");
+				if(isNotNull(syllabus.getCourseEntity().getClassRoomEntity())){
+					tdsb2.append(syllabus.getCourseEntity().getClassRoomEntity().getInfo());
+				}
+				tdsb2.append("</td>");
+			}
+		}
+		trsb.append(tdsb);
+		trsb.append("</tr><tr align='center'>");
+		trsb.append(tdsb2);
+		return trsb.toString();
+	}
+	private boolean isNotNull(Object obj){
+		return obj == null ? false : true;
+	}
 	
 }
