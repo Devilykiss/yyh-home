@@ -1,0 +1,110 @@
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+  	<constant name="struts.devMode" value="true" /> 
+  	
+    <package name="default" extends="struts-default" namespace="/">
+   	 	<interceptors>
+    		<interceptor name="myInterceptor" class="com.classcourse.common.MyInterceptor"/>
+    		<interceptor-stack name="myInterceptorStack">
+    			<interceptor-ref name="myInterceptor"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<!-- 设置为缺省拦截器 -->
+    	<default-interceptor-ref name="myInterceptorStack"/>
+    	<default-action-ref name="invalidAction"></default-action-ref>
+    	<global-results>
+    		<result name="fail">/WEB-INF/framework/fail.jsp</result>
+    		<result name="repeatedID">/WEB-INF/framework/repeatedID.jsp</result>
+    		<result name="login">/login.jsp</result>
+    	</global-results>
+    	<global-exception-mappings>
+			<exception-mapping result="error" exception="java.lang.Exception"></exception-mapping>
+		</global-exception-mappings>
+    	<action name="invalidAction">
+    		<result>/WEB-INF/framework/404.jsp</result>
+    	</action>
+    	<action name="login" class="loginAction" method="login">
+    	<!-- <result name="student">/WEB-INF/framework/studentDefault.jsp</result>
+    		<result name="teacher">/WEB-INF/framework/teacherDefault.jsp</result>
+    		<result name="admin">/WEB-INF/framework/adminDefault.jsp</result>
+    		 -->
+    	</action>
+    	
+    </package>
+    <package name="frame" extends="default" namespace="/frame">
+  		<action name="*">
+    		<result>/WEB-INF/framework/{1}.jsp</result>
+    	</action>
+    </package>
+    
+     <package name="admin" extends="default" namespace="/admin">
+      	<global-results>
+	     	<result name="allCourseInfo">/WEB-INF/jsp/admin/allCourseInfo.jsp</result>
+	     </global-results>
+    	 <action name="n_*">
+    		<result>/WEB-INF/jsp/admin/{1}.jsp</result>
+    	</action>
+     	<action name="addStudent" class="adminAction" method="addStudent">
+     		<result name="success">/WEB-INF/jsp/admin/addStudent.jsp</result>
+     	</action>
+  		<action name="addCourse" class="adminAction" method="addCourse">
+  			<result name="success">/WEB-INF/jsp/admin/addCourse.jsp</result>
+     	</action>
+     	<action name="queryAllCourse" class="adminAction" method="queryAllCourse">
+     	</action>
+     	<action name="deleteCourse" class="adminAction" method="deleteCourse">
+     	</action>
+     	<action name="queryCourseObject" class="adminAction" method="queryCourseObject">
+     		<result name="success">/WEB-INF/jsp/admin/editCourse.jsp</result>
+     	</action>
+     	<action name="updateCourse" class="adminAction" method="updateCourse">
+     	</action>
+     	
+     	<action name="listSyllabusByAdminNo" class="adminAction" method="listSyllabusByAdminNo">
+     		<result name="success">/WEB-INF/jsp/admin/syllabusInfo.jsp</result>
+     	</action>
+     	
+    </package>
+    
+    
+     <package name="teacher" extends="default" namespace="/teacher">
+	     <global-results>
+	     	<result name="allTeacherInfo">/WEB-INF/jsp/admin/allTeacherInfo.jsp</result>
+	     </global-results>
+  		<action name="n_*">
+    		<result>/WEB-INF/jsp/teacher/{1}.jsp</result>
+    	</action>
+    	<action name="queryAllTeacher" class="teacherAction" method="queryAllTeacher">
+     	</action>
+     	<action name="deleteTeacher" class="teacherAction" method="deleteTeacher">
+     	</action>
+     	<action name="queryTeacherObject" class="teacherAction" method="queryTeacherObject">
+     		<result name="success">/WEB-INF/jsp/admin/editTeacher.jsp</result>
+     	</action>
+     	<action name="updateTeacher" class="teacherAction" method="updateTeacher">
+     	</action>
+    </package>
+    
+    
+     <package name="sudent" extends="default" namespace="/student">
+     	<global-results>
+	     	<result name="allStudentInfo">/WEB-INF/jsp/admin/allStudentInfo.jsp</result>
+	     </global-results>
+   		<action name="n_*">
+    		<result>/WEB-INF/jsp/student/{1}.jsp</result>
+    	</action>
+     	<action name="queryAllStudent" class="studentAction" method="queryAllStudent">
+     	</action>
+     	<action name="deleteStudent" class="studentAction" method="deleteStudent">
+     	</action>
+     	<action name="queryStudentObject" class="studentAction" method="queryStudentObject">
+     		<result name="success">/WEB-INF/jsp/admin/editStudent.jsp</result>
+     	</action>
+     	<action name="updateStudent" class="studentAction" method="updateStudent">
+     	</action>
+    </package>
+    
+</struts>
